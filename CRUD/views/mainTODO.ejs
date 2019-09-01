@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://unpkg.com/lodash@4/lodash.min.js"></script>
+        <script src="https://unpkg.com/lowdb@0.17/dist/low.min.js"></script>
+        <script src="https://unpkg.com/lowdb@0.17/dist/LocalStorage.min.js"></script>
+        <script src="./mainTODO"></script>
+        <script type="text/javascript" language="JavaScript">
+            var adapter = new LocalStorage('db')
+            var db = low(adapter)
+            var isChecking = false
+            db.defaults({ todo : [] }).write()
+
+            function getColumn(column) {
+                var rows = new Array();
+                rows = db.get('todo').map(column).value()
+                return rows
+            }
+
+            function viewList() {
+                var date = getColumn('date')
+                var time = getColumn('time')
+                var post = getColumn('post')
+                var loc = getColumn('loc')
+
+                for (var i=0; i<db.get('todo').size().value(); i++) {
+                    document.write('<tr>')
+                    document.write('<td><input type="radio" id="isChecked" name="radiobox"></td>')
+                    document.write('<td>' + date[i] + '</td>')
+                    document.write('<td>' + time[i] + '</td>')
+                    document.write('<td>' + post[i] + '</td>')
+                    document.write('<td>' + loc[i] + '</td>')
+                    document.write('</tr>')
+                }
+            }
+
+            function deleteRow() {
+                var table = document.getElementById('dataList')
+                var rowCount = table.rows.length
+                isChecking = false
+
+            	for(var i = 0; i < rowCount; i++){
+            		var row = table.rows[i]
+            		var chkBox = row.cells[0].childNodes[0]
+
+            		if(chkBox != null && chkBox.checked == true) {
+            		    isChecking = true
+            			table.deleteRow(i)
+            			db.get('todo').remove({index : i - 1}).write()
+            			updateIndex(i - 1)
+            			rowCount--
+            		}
+            	}
+            	if (!isChecking) {
+            	    alert('선택한 항목이 없습니다!')
+            	}
+            }
+
+            function getUpdateRow() {
+                var table = document.getElementById('dataList')
+                var rowCount = table.rows.length
+                isChecking = false
+
+            	for(var i = 0; i < rowCount; i++){
+            		var row = table.rows[i]
+            		var chkBox = row.cells[0].childNodes[0]
+
+            		if(chkBox != null && chkBox.checked == true) {
+            		    isChecking = true
+            			return (i - 1)
+            		}
+            	}
+            	if (!isChecking) {
+            	    alert('선택한 항목이 없습니다!')
+            	}
+            }
+
+            function updateIndex(criteria) {
+                var index = getColumn('index')
+                for (var i=criteria + 1; i < db.get('todo').size().value() + 1; i++) {
+                    db.get('todo').find({index : i}).assign({index : i-1}).write()
+                }
+            }
+
+            function goUpdate() {
+                document.updateform.rowIndex.value = getUpdateRow()
+            }
+        </script>
+    </head>
+    <body>
+    <style>
+        table.type11 {
+            border-collapse: separate;
+            border-spacing: 1px;
+            text-align: center;
+            line-height: 1.5;
+            margin: 20px 10px;
+        }
+        table.type11 th {
+            width: 250px;
+            padding: 10px;
+            font-weight: bold;
+            vertical-align: top;
+            color: #fff;
+            background: #E4617D;
+        }
+        table.type11 td {
+            width: 250px;
+            padding: 10px;
+            vertical-align: top;
+            border-bottom: 1px solid #ccc;
+            background: #fff;
+        }
+        #btn {
+            width:100px;
+            background-color: #e4617d;
+            border: none;
+            border-radius: 10px;
+            color:#fff;
+            padding: 15px 0;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px;
+            cursor: pointer;
+        }
+    </style>
+    <center>
+        <div style="float: left; width: 33%;">
+            <input type="button" id="btn" name="create" value="일정 추가" onclick="location='createTODO'">
+        </div>
+        <div style="float: left; width: 33%;">
+            <input type="button" id="btn" name="delete" value="일정 삭제" onclick="deleteRow()">
+        </div>
+        <div style="float: left; width: 33%;">
+            <form action="mainTODO" method="post" name="updateform" id="updateform">
+                <input type="hidden" name="rowIndex" id="rowIndex" value="">
+                <input type="submit" id="btn" name="update" value="일정 수정" onclick="javascript:goUpdate()">
+            </form>
+        </div>
+        <br>
+        <table class="type11" id="dataList">
+            <thead>
+            <tr>
+                <th scope="cols">선택</th>
+                <th scope="cols">날짜</th>
+                <th scope="cols">시간</th>
+                <th scope="cols">내용</th>
+                <th scope="cols">장소</th>
+            </tr>
+            </thead>
+            <script type="text/javascript" language="JavaScript">
+                viewList();
+            </script>
+        </table>
+    </center>
+    </body>
+</html>

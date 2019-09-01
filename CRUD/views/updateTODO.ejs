@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://unpkg.com/lodash@4/lodash.min.js"></script>
+        <script src="https://unpkg.com/lowdb@0.17/dist/low.min.js"></script>
+        <script src="https://unpkg.com/lowdb@0.17/dist/LocalStorage.min.js"></script>
+        <script src="./updateTODO"></script>
+        <script>
+            var adapter = new LocalStorage('db')
+            var db = low(adapter)
+            db.defaults({ todo : [] }).write()
+
+            var row = '<%= rowIndex %>'
+            row *= 1
+
+            function setRow() {
+                document.getElementById('date').value = db.get('todo').find({index : row}).value().date
+                document.getElementById('time').value = db.get('todo').find({index : row}).value().time
+                document.getElementById('post').value = db.get('todo').find({index : row}).value().post
+                document.getElementById('loc').value = db.get('todo').find({index : row}).value().loc
+            }
+
+            function updateRow() {
+                db.get('todo').find({index : row}).assign({
+                    date : document.getElementById('date').value,
+                    time : document.getElementById('time').value,
+                    post : document.getElementById('post').value,
+                    loc : document.getElementById('loc').value,
+                }).write()
+                alert('수정이 완료되었습니다!')
+            }
+        </script>
+    </head>
+    <body>
+    <style>
+        #btn {
+            width:100px;
+            background-color: #e4617d;
+            border: none;
+            border-radius: 10px;
+            color:#fff;
+            padding: 15px 0;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px;
+            cursor: pointer;
+        }
+    </style>
+    <center>
+        <form action="updateTODO" method="post">
+            <p>날짜</p>
+            <input type = "date" min = "2019-09-01" max = "2019-12-31" id="date" value=""/>
+            <p>시간</p>
+            <input type="time" id="time" value=""/>
+            <p>내용</p>
+            <input type="text" id="post" value=""/>
+            <p>장소</p>
+            <input type="text" id="loc" value=""/>
+            <script>
+                setRow();
+            </script>
+            <br><br>
+            <input type="submit" id="btn" value="수정" onclick="javascript:updateRow()"/>
+            <input type="button" id="btn" value="취소" onclick="javascript:history.back(-1)">
+        </form>
+    </center>
+    </body>
+</html>
