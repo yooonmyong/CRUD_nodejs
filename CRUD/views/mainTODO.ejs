@@ -72,6 +72,7 @@
             	}
             	if (!isChecking) {
             	    alert('선택한 항목이 없습니다!')
+            	    return -1;
             	}
             }
 
@@ -134,7 +135,7 @@
             <input type="button" id="btn" name="delete" value="일정 삭제" onclick="deleteRow()">
         </div>
         <div style="float: left; width: 33%;">
-            <form action="mainTODO" method="post" name="updateform" id="updateform">
+            <form action="mainTODO" method="post" name="updateform" id="updateform" onsubmit="getUpdateRow() != -1">
                 <input type="hidden" name="rowIndex" id="rowIndex" value="">
                 <input type="submit" id="btn" name="update" value="일정 수정" onclick="javascript:goUpdate()">
             </form>

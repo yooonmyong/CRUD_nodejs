@@ -14,7 +14,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    res.render('updateTODO', {rowIndex : req.body.rowIndex});
+    if(req.body.rowIndex != -1) {
+        res.render('updateTODO', {rowIndex : req.body.rowIndex});
+    }
+    else {
+        res.redirect('mainTODO');
+    }
 });
 
 module.exports = router;
