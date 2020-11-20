@@ -1,6 +1,5 @@
-# prography_5th_nodejs
-프로그라피 5기 Node.js 사전 과제
-이면서 Node.js 연습용 CRUD 웹
+# CRUD_nodejs
+Node.js 연습용 웹
 
 -프론트 단의 javascript와 css 파일 분리
 -웹 배포
